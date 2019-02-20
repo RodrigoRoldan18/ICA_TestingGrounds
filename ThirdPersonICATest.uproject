@@ -1,13 +1,16 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "{90D666B2-4970-1D4C-6C40-CA8805A10622}",
+	"EngineAssociation": "{3B72D922-4FCF-C9A4-9473-9BAC33FCE117}",
 	"Category": "",
 	"Description": "",
 	"Modules": [
 		{
 			"Name": "ThirdPersonICATest",
 			"Type": "Runtime",
-			"LoadingPhase": "Default"
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"Engine"
+			]
 		}
 	]
 }

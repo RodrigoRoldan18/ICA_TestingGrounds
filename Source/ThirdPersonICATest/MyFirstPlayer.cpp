@@ -6,6 +6,7 @@
 #include "GameFramework/Controller.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Projectile.h"
+#include "DrawDebugHelpers.h"
 
 // Sets default values
 AMyFirstPlayer::AMyFirstPlayer()
@@ -21,6 +22,14 @@ AMyFirstPlayer::AMyFirstPlayer()
 	FPSCameraComponent->SetRelativeLocation(FVector(-200.0f, 0.0f, 150.0f + BaseEyeHeight));
 	// Allow the pawn to control camera rotation.
 	FPSCameraComponent->bUsePawnControlRotation = true;
+
+	HoldingComponent = CreateDefaultSubobject<USceneComponent>(TEXT("HoldingComponent"));
+	HoldingComponent->RelativeLocation.X = 50.0f;
+	HoldingComponent->SetupAttachment(FPSCameraComponent);
+
+	CurrentItem = NULL;
+	bCanMove = true;
+	bInspecting = false;	
 }
 
 // Called when the game starts or when spawned
@@ -33,12 +42,68 @@ void AMyFirstPlayer::BeginPlay()
 		//indicates that we will never need to update or refresh this message.
 		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("We are using MyFirstCharacter."));
 	}
+
+	PitchMax = GetWorld()->GetFirstPlayerController()->PlayerCameraManager->ViewPitchMax;
+	PitchMin = GetWorld()->GetFirstPlayerController()->PlayerCameraManager->ViewPitchMin;
+
 }
 
 // Called every frame
 void AMyFirstPlayer::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime);
+	Super::Tick(DeltaTime);	
+
+	Start = FPSCameraComponent->GetComponentLocation();
+	ForwardVector = FPSCameraComponent->GetForwardVector();
+	End = ((ForwardVector * 400.0f) + Start);
+
+	DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, 1, 0, 1);
+
+	if (!bHoldingItem)
+	{
+		if (GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_Visibility, DefaultComponentQueryParams,
+			DefaultResponseParams))
+		{
+			if (Hit.GetActor()->GetClass()->IsChildOf(APickup::StaticClass()))
+			{
+				CurrentItem = Cast<APickup>(Hit.GetActor());
+			}
+		}
+		else
+		{
+			CurrentItem = NULL;
+		}
+	}	
+
+	if (bInspecting)
+	{
+		if (bHoldingItem)
+		{
+			FPSCameraComponent->SetFieldOfView(FMath::Lerp(FPSCameraComponent->FieldOfView,
+				90.0f, 0.1f));
+			//THE PROBLEM IS HERE, THE RELATIVE LOCATION IS OFF. 
+			HoldingComponent->SetRelativeLocation(FVector(0.0f, 50.0f, 50.0f - BaseEyeHeight));
+			GetWorld()->GetFirstPlayerController()->PlayerCameraManager->ViewPitchMax = 179.9000002f;
+			GetWorld()->GetFirstPlayerController()->PlayerCameraManager->ViewPitchMin = -179.9000002f;
+			CurrentItem->RotateActor();
+		}
+		else
+		{
+			FPSCameraComponent->SetFieldOfView(FMath::Lerp(FPSCameraComponent->FieldOfView,
+				45.0f, 0.1f));
+		}
+	}
+	else
+	{
+		FPSCameraComponent->SetFieldOfView(FMath::Lerp(FPSCameraComponent->FieldOfView,
+			90.0f, 0.1f));
+
+		if (bHoldingItem)
+		{
+			//THE PROBLEM IS HERE, THE RELATIVE LOCATION IS OFF
+			HoldingComponent->SetRelativeLocation(FVector(50.0f, 0.0f, 0.0f - BaseEyeHeight));
+		}
+	}
 
 }
 
@@ -57,21 +122,34 @@ void AMyFirstPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &AMyFirstPlayer::StartJump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &AMyFirstPlayer::StopJump);
 
-	PlayerInputComponent->BindAction("Fire", IE_Released, this, &AMyFirstPlayer::Fire);
+	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &AMyFirstPlayer::Fire);
+
+	PlayerInputComponent->BindAction("Action", IE_Pressed, this, &AMyFirstPlayer::OnAction);
+	
+	PlayerInputComponent->BindAction("Inspect", IE_Pressed, this, &AMyFirstPlayer::OnInspect);
+	PlayerInputComponent->BindAction("Inspect", IE_Released, this, &AMyFirstPlayer::OnInspectReleased);
 }
 
 void AMyFirstPlayer::MoveForward(float Value)
 {
 	// Find out which way is "forward" and record that the player wants to move that way.
 	FVector Direction = FRotationMatrix(Controller->GetControlRotation()).GetScaledAxis(EAxis::X);
-	AddMovementInput(Direction, Value);
+	if (Value != 0.0f && bCanMove)
+	{
+		AddMovementInput(Direction, Value);
+	}
+	
 }
 
 void AMyFirstPlayer::MoveRight(float Value)
 {
 	// Find out which way is "right" and record that the player wants to move that way.
 	FVector Direction = FRotationMatrix(Controller->GetControlRotation()).GetScaledAxis(EAxis::Y);
-	AddMovementInput(Direction, Value);
+	if (Value != 0.0f && bCanMove)
+	{
+		AddMovementInput(Direction, Value);
+	}
+	
 }
 
 void AMyFirstPlayer::StartJump()
@@ -113,6 +191,66 @@ void AMyFirstPlayer::Fire()
 				FVector LaunchDirection = MuzzleRotation.Vector();
 				Projectile->FireInDirection(LaunchDirection);
 			}
+		}
+	}
+}
+
+void AMyFirstPlayer::OnAction()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("You are pressing E"));
+	if (CurrentItem && !bInspecting)
+	{
+		ToggleItemPickup();
+	}
+}
+
+void AMyFirstPlayer::OnInspect()
+{
+	if (bHoldingItem)
+	{
+		LastRotation = GetControlRotation();
+		ToggleMovement();
+	}
+	else
+	{
+		bInspecting = true;
+	}
+}
+
+void AMyFirstPlayer::OnInspectReleased()
+{
+	if (bInspecting && bHoldingItem)
+	{
+		GetController()->SetControlRotation(LastRotation);
+		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->ViewPitchMax = PitchMax;
+		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->ViewPitchMin = PitchMin;
+		ToggleMovement();
+	
+	}
+	else
+	{
+		bInspecting = false;
+	}
+}
+
+void AMyFirstPlayer::ToggleMovement()
+{
+	bCanMove = !bCanMove;
+	bInspecting = !bInspecting;
+	FPSCameraComponent->bUsePawnControlRotation = !FPSCameraComponent->bUsePawnControlRotation;
+	bUseControllerRotationYaw = !bUseControllerRotationYaw;
+}
+
+void AMyFirstPlayer::ToggleItemPickup()
+{
+	if (CurrentItem)
+	{
+		bHoldingItem = !bHoldingItem;
+		CurrentItem->Pickup();
+
+		if (!bHoldingItem)
+		{
+			CurrentItem = NULL;
 		}
 	}
 }

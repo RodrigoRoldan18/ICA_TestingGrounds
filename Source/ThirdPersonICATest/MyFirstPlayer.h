@@ -4,12 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Pickup.h"
 #include "MyFirstPlayer.generated.h"
 
 UCLASS()
 class THIRDPERSONICATEST_API AMyFirstPlayer : public ACharacter
 {
 	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere)
+	class USceneComponent* HoldingComponent;
 
 public:
 	//the UPROPERTY creates a variable that can be seen in the editor and edited
@@ -55,8 +59,8 @@ public:
 		class UCameraComponent* FPSCameraComponent;
 
 	//Person mesh, visible only to the owning player
-	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
-		class USkeletalMeshComponent* FPSMesh;
+	UPROPERTY(VisibleAnywhere, Category = Mesh)
+		class UStaticMesh* HeldObjectSlot;
 
 	// Gun muzzle's offset from the camera location.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
@@ -69,9 +73,21 @@ public:
 	// Sets default values for this character's properties
 	AMyFirstPlayer();
 
+	
+
 protected:
 	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+	virtual void BeginPlay() override;	
+
+	void OnAction();
+
+	void OnInspect();
+
+	void OnInspectReleased();
+
+	void ToggleMovement();
+	
+	void ToggleItemPickup();
 
 public:
 	// Called every frame
@@ -79,6 +95,28 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	UPROPERTY(EditAnywhere)
+		class APickup* CurrentItem;
+
+	bool bCanMove;
+	bool bHoldingItem;
+	bool bInspecting;
+
+	float PitchMax;
+	float PitchMin;
+
+	FVector HoldingComp;
+	FRotator LastRotation;
+	
+	FVector Start;
+	FVector ForwardVector;
+	FVector End;
+
+	FHitResult Hit;
+
+	FComponentQueryParams DefaultComponentQueryParams;
+	FCollisionResponseParams DefaultResponseParams;
 
 
 

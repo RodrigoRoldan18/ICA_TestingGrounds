@@ -1,6 +1,6 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "{51CDB3FC-4079-D7CE-0FE3-64808BCDE8E8}",
+	"EngineAssociation": "{5F3BB093-4A0F-E60E-C8DF-81B80447F496}",
 	"Category": "",
 	"Description": "",
 	"Modules": [
@@ -9,7 +9,8 @@
 			"Type": "Runtime",
 			"LoadingPhase": "Default",
 			"AdditionalDependencies": [
-				"Engine"
+				"Engine",
+				"AIModule"
 			]
 		}
 	]

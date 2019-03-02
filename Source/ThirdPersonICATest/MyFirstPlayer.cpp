@@ -80,9 +80,8 @@ void AMyFirstPlayer::Tick(float DeltaTime)
 		if (bHoldingItem)
 		{
 			FPSCameraComponent->SetFieldOfView(FMath::Lerp(FPSCameraComponent->FieldOfView,
-				90.0f, 0.1f));
-			//THE PROBLEM IS HERE, THE RELATIVE LOCATION IS OFF. 
-			HoldingComponent->SetRelativeLocation(FVector(0.0f, 50.0f, 50.0f - BaseEyeHeight));
+				90.0f, 0.1f));			 
+			HoldingComponent->SetRelativeLocation(FVector(200.0f, 0.0f, 0.0f));
 			GetWorld()->GetFirstPlayerController()->PlayerCameraManager->ViewPitchMax = 179.9000002f;
 			GetWorld()->GetFirstPlayerController()->PlayerCameraManager->ViewPitchMin = -179.9000002f;
 			CurrentItem->RotateActor();
@@ -99,9 +98,8 @@ void AMyFirstPlayer::Tick(float DeltaTime)
 			90.0f, 0.1f));
 
 		if (bHoldingItem)
-		{
-			//THE PROBLEM IS HERE, THE RELATIVE LOCATION IS OFF
-			HoldingComponent->SetRelativeLocation(FVector(50.0f, 0.0f, 0.0f - BaseEyeHeight));
+		{			
+			HoldingComponent->SetRelativeLocation(FVector(400.0f, 0.0f, 0.0f));
 		}
 	}
 
@@ -197,7 +195,7 @@ void AMyFirstPlayer::Fire()
 
 void AMyFirstPlayer::OnAction()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("You are pressing E"));
+	//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("You are pressing E"));
 	if (CurrentItem && !bInspecting)
 	{
 		ToggleItemPickup();

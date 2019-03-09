@@ -53,9 +53,10 @@ void AMyFirstPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);	
 
-	Start = FPSCameraComponent->GetComponentLocation();
+	GetActorEyesViewPoint(CameraLoc, CameraRot);
+	Start = CameraLoc;
 	ForwardVector = FPSCameraComponent->GetForwardVector();
-	End = ((ForwardVector * 400.0f) + Start);
+	End = ((ForwardVector * 200.0f) + Start);
 
 	DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, 1, 0, 1);
 

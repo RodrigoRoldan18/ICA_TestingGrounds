@@ -113,6 +113,9 @@ public:
 	FVector ForwardVector;
 	FVector End;
 
+	FVector CameraLoc;
+	FRotator CameraRot;
+
 	FHitResult Hit;
 
 	FComponentQueryParams DefaultComponentQueryParams;

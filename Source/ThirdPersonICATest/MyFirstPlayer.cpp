@@ -163,9 +163,10 @@ void AMyFirstPlayer::StopJump()
 
 void AMyFirstPlayer::Fire()
 {
-	// Attempt to fire a projectile.
+	// Attempt to fire a projectile.	
 	if (ProjectileClass)
 	{
+		//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Shooting"));
 		// Get the camera transform.
 		FVector CameraLocation;
 		FRotator CameraRotation;

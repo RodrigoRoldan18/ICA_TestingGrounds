@@ -20,16 +20,16 @@ public:
 	//anywhere as it states in the brackets. Also the Category determines the properties
 	//of the variable
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
-		int32 TotalDamage;
+	int32 TotalDamage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
-		float DamageTimeInSeconds;
+	float DamageTimeInSeconds;
 
 	//it's calculated using the designers settings. the visibleanywhere lets it be seen
 	//but not editable. the Transient flag means that it won't be saved or loaded from disk
 	//it is meant to be a derived, non-persistent value. 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Transient, Category = "Damage")
-		float DamagePerSecond;
+	float DamagePerSecond;
 
 	//The UFUNCTION handles the function exposing it to Blueprints
 	//UFUNCTION(BlueprintCallable, Category = "Damage")
@@ -38,37 +38,37 @@ public:
 
 	//After adding axis mapping to the engine, you have to add this:
 	UFUNCTION()
-		void MoveForward(float Value);
+	void MoveForward(float Value);
 
 	UFUNCTION()
-		void MoveRight(float Value);
+	void MoveRight(float Value);
 
 	//When adding the jump on the engine, remember to put it under action mappings
 	UFUNCTION()
-		void StartJump();
+	void StartJump();
 
 	UFUNCTION()
-		void StopJump();
+	void StopJump();
 
 	// Function that handles firing projectiles.
 	UFUNCTION()
-		void Fire();
+	void Fire();
 
 	//FPS Camera. WATCH OUT! Some code has been added to the constructor
 	UPROPERTY(VisibleAnywhere)
-		class UCameraComponent* FPSCameraComponent;
+	class UCameraComponent* FPSCameraComponent;
 
 	//Person mesh, visible only to the owning player
 	UPROPERTY(VisibleAnywhere, Category = Mesh)
-		class UStaticMesh* HeldObjectSlot;
+	class UStaticMesh* HeldObjectSlot;
 
 	// Gun muzzle's offset from the camera location.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-		FVector MuzzleOffset;
+	FVector MuzzleOffset;
 
 	// Projectile class to spawn.
 	UPROPERTY(EditDefaultsOnly, Category = Projectile)
-		TSubclassOf<class AProjectile > ProjectileClass;
+	TSubclassOf<class AProjectile> ProjectileClass;
 
 	// Sets default values for this character's properties
 	AMyFirstPlayer();
@@ -97,7 +97,7 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	UPROPERTY(EditAnywhere)
-		class APickup* CurrentItem;
+	class APickup* CurrentItem;
 
 	bool bCanMove;
 	bool bHoldingItem;

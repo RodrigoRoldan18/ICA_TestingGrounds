@@ -13,17 +13,16 @@ class THIRDPERSONICATEST_API AProjectile : public AActor
 	
 public:	
 	UPROPERTY(VisibleDefaultsOnly, Category = Projectile)
-		class USphereComponent* CollisionComponent;
+	class USphereComponent* CollisionComponent;
 
 	UPROPERTY(VisibleAnywhere, Category = Movement)
-		class UProjectileMovementComponent* ProjectileMovementComponent;	
+	class UProjectileMovementComponent* ProjectileMovementComponent;	
 
 	// Function that initializes the projectile's velocity in the shoot direction.
 	void FireInDirection(const FVector& ShootDirection);
 
-	// Function that is called when the projectile hits something.
-	UFUNCTION()
-		void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
+	// Function that is called when the projectile hits something.	
+	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
 	
 	// Sets default values for this actor's properties
 	AProjectile();

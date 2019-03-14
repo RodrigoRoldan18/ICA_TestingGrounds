@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Pickup.h"
+#include "Projectile.h"
 #include "MyFirstPlayer.generated.h"
 
 UCLASS()
@@ -57,6 +58,10 @@ public:
 	//FPS Camera. WATCH OUT! Some code has been added to the constructor
 	UPROPERTY(VisibleAnywhere)
 	class UCameraComponent* FPSCameraComponent;
+
+	//Spring Arm, consider that it has to be initialised in the constructor
+	UPROPERTY(VisibleAnywhere)
+	class USpringArmComponent* FPSSpringArmComponent;
 
 	//Person mesh, visible only to the owning player
 	UPROPERTY(VisibleAnywhere, Category = Mesh)

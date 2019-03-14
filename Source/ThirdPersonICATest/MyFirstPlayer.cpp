@@ -1,27 +1,38 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "MyFirstPlayer.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/Controller.h"
 #include "Components/SkeletalMeshComponent.h"
-#include "Projectile.h"
+//#include "Projectile.h"
 #include "DrawDebugHelpers.h"
 
 // Sets default values
 AMyFirstPlayer::AMyFirstPlayer()
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;	
-	// Create a first person camera component.
-	FPSCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
-	// Attach the camera component to our capsule component.
-	FPSCameraComponent->SetupAttachment(GetCapsuleComponent());
+	PrimaryActorTick.bCanEverTick = true;
+	//Set up the components
+	FPSSpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraSpringArm"));
+	FPSSpringArmComponent->SetupAttachment(RootComponent);
+	FPSSpringArmComponent->SetRelativeLocationAndRotation(FVector(0.0f, 0.0f, BaseEyeHeight), FRotator(-30.0f, 0.0f, 0.0f));
+	FPSSpringArmComponent->TargetArmLength = 400.0f;
+	FPSSpringArmComponent->bEnableCameraLag = true;
+	FPSSpringArmComponent->CameraLagSpeed = 3.0f;
+	FPSSpringArmComponent->bUsePawnControlRotation = true;
+	// Create a first person camera component.	
+	FPSCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("PlayerCamera"));
+	// Attach the camera component to our spring arm	
+	FPSCameraComponent->SetupAttachment(FPSSpringArmComponent, USpringArmComponent::SocketName);
 	// Position the camera slightly above the eyes.
-	FPSCameraComponent->SetRelativeRotation(FRotator(-30.0f, 0.0f, 0.0f));
-	FPSCameraComponent->SetRelativeLocation(FVector(-200.0f, 0.0f, 150.0f + BaseEyeHeight));
+	//FPSCameraComponent->SetRelativeRotation(FRotator(-30.0f, 0.0f, 0.0f));
+	//FPSCameraComponent->SetRelativeLocation(FVector(-200.0f, 0.0f, 150.0f + BaseEyeHeight));
+	//FPSCameraComponent->SetRelativeLocationAndRotation(FVector(-200.0f, 0.0f, 150.0f + BaseEyeHeight), FRotator(-30.0f, 0.0f, 0.0f));
 	// Allow the pawn to control camera rotation.
-	FPSCameraComponent->bUsePawnControlRotation = true;
+	FPSCameraComponent->bUsePawnControlRotation = false;
+	//FPSSpringArmComponent->bUsePawnControlRotation = true;
 
 	HoldingComponent = CreateDefaultSubobject<USceneComponent>(TEXT("HoldingComponent"));
 	HoldingComponent->RelativeLocation.X = 50.0f;
@@ -238,6 +249,7 @@ void AMyFirstPlayer::ToggleMovement()
 	bCanMove = !bCanMove;
 	bInspecting = !bInspecting;
 	FPSCameraComponent->bUsePawnControlRotation = !FPSCameraComponent->bUsePawnControlRotation;
+	//FPSSpringArmComponent->bUsePawnControlRotation = !FPSSpringArmComponent->bUsePawnControlRotation;
 	bUseControllerRotationYaw = !bUseControllerRotationYaw;
 }
 

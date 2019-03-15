@@ -18,9 +18,7 @@ AMyFirstPlayer::AMyFirstPlayer()
 	FPSSpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraSpringArm"));
 	FPSSpringArmComponent->SetupAttachment(RootComponent);
 	FPSSpringArmComponent->SetRelativeLocationAndRotation(FVector(0.0f, 0.0f, BaseEyeHeight), FRotator(-30.0f, 0.0f, 0.0f));
-	FPSSpringArmComponent->TargetArmLength = 400.0f;
-	FPSSpringArmComponent->bEnableCameraLag = true;
-	FPSSpringArmComponent->CameraLagSpeed = 3.0f;
+	FPSSpringArmComponent->TargetArmLength = 400.0f;	
 	FPSSpringArmComponent->bUsePawnControlRotation = true;
 	// Create a first person camera component.	
 	FPSCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("PlayerCamera"));
@@ -248,8 +246,8 @@ void AMyFirstPlayer::ToggleMovement()
 {
 	bCanMove = !bCanMove;
 	bInspecting = !bInspecting;
-	FPSCameraComponent->bUsePawnControlRotation = !FPSCameraComponent->bUsePawnControlRotation;
-	//FPSSpringArmComponent->bUsePawnControlRotation = !FPSSpringArmComponent->bUsePawnControlRotation;
+	//FPSCameraComponent->bUsePawnControlRotation = !FPSCameraComponent->bUsePawnControlRotation;
+	FPSSpringArmComponent->bUsePawnControlRotation = !FPSSpringArmComponent->bUsePawnControlRotation;
 	bUseControllerRotationYaw = !bUseControllerRotationYaw;
 }
 

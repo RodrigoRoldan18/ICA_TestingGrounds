@@ -10,31 +10,26 @@ UCLASS()
 class THIRDPERSONICATEST_API AProjectile : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
+
+	/** Sphere collision component */
 	UPROPERTY(VisibleDefaultsOnly, Category = Projectile)
-	class USphereComponent* CollisionComponent;
+	class USphereComponent* CollisionComp;
 
-	UPROPERTY(VisibleAnywhere, Category = Movement)
-	class UProjectileMovementComponent* ProjectileMovementComponent;	
+	/** Projectile movement component */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
+	class UProjectileMovementComponent* ProjectileMovement;
+	
+public:
 
-	// Function that initializes the projectile's velocity in the shoot direction.
-	void FireInDirection(const FVector& ShootDirection);
+	/** Returns CollisionComp subobject **/
+	FORCEINLINE class USphereComponent* GetCollisionComp() const { return CollisionComp; }
+	/** Returns ProjectileMovement subobject **/
+	FORCEINLINE class UProjectileMovementComponent* GetProjectileMovement() const { return ProjectileMovement; }
 
 	// Function that is called when the projectile hits something.	
+	UFUNCTION()
 	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
 	
 	// Sets default values for this actor's properties
 	AProjectile();
-
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	
-	
 };

@@ -32,6 +32,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	//Fires a projectile
+	UFUNCTION(BlueprintCallable, Category = "Input")
 	void OnFire();
 
 	/** Projectile class to spawn */
@@ -40,13 +41,13 @@ public:
 
 	/** Sound to play each time we fire */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	USoundBase* FireSound;
+	class USoundBase* FireSound;
 
 	/** AnimMontage to play each time we fire */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	UAnimMontage* FireAnimation;
+	class UAnimMontage* FireAnimation;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	UAnimInstance* AnimInstance;
+	class UAnimInstance* AnimInstance;
 	
 };

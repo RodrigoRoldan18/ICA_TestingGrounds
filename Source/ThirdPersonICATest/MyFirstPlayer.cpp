@@ -3,6 +3,7 @@
 #include "MyFirstPlayer.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "GameFramework/InputSettings.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/Controller.h"
 #include "Components/SkeletalMeshComponent.h"
@@ -30,12 +31,12 @@ AMyFirstPlayer::AMyFirstPlayer()
 	FPSCameraComponent->bUsePawnControlRotation = false;
 	//FPSSpringArmComponent->bUsePawnControlRotation = true;
 
-	//// Create a mesh component that will be used when being viewed from a '1st person' view (when controlling this pawn)
-	//Mesh1P = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("CharacterMesh1P"));
-	//Mesh1P->SetOnlyOwnerSee(true);				// Set so only owner can see mesh
-	//Mesh1P->SetupAttachment(FPSCameraComponent);	// Attach mesh to FirstPersonCameraComponent
-	//Mesh1P->bCastDynamicShadow = false;			// Disallow mesh to cast dynamic shadows
-	//Mesh1P->CastShadow = false;				// Disallow mesh to cast other shadows
+	// Create a mesh component that will be used when being viewed from a '1st person' view (when controlling this pawn)
+	Mesh1P = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("CharacterMesh1P"));
+	Mesh1P->SetOnlyOwnerSee(true);				// Set so only owner can see mesh
+	Mesh1P->SetupAttachment(RootComponent);	// Attach mesh to FirstPersonCameraComponent
+	Mesh1P->bCastDynamicShadow = false;			// Disallow mesh to cast dynamic shadows
+	Mesh1P->CastShadow = false;				// Disallow mesh to cast other shadows
 
 	HoldingComponent = CreateDefaultSubobject<USceneComponent>(TEXT("HoldingComponent"));
 	HoldingComponent->RelativeLocation.X = 50.0f;
@@ -64,6 +65,7 @@ void AMyFirstPlayer::BeginPlay()
 	{
 		return;
 	}
+	//This didn't really work so the gun was added like with the NPCs through BP
 	Gun = GetWorld()->SpawnActor<AGun>(GunBlueprint);
 	Gun->AttachToComponent(GetMesh(), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint")); //Attach gun mesh
 	Gun->AnimInstance = GetMesh()->GetAnimInstance();
@@ -140,6 +142,8 @@ void AMyFirstPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAxis("Turn", this, &AMyFirstPlayer::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("LookUp", this, &AMyFirstPlayer::AddControllerPitchInput);
 	// Set up "action" bindings.
+
+	//PlayerInputComponent->BindAction("Fire", IE_Pressed, Gun, &AGun::OnFire);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &AMyFirstPlayer::StartJump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &AMyFirstPlayer::StopJump);	
 

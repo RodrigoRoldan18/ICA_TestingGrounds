@@ -10,11 +10,7 @@
 UCLASS()
 class THIRDPERSONICATEST_API AMyFirstPlayer : public ACharacter
 {
-	GENERATED_BODY()
-
-	/** Pawn mesh: 1st person view (arms; seen only by self) */
-	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
-	class USkeletalMeshComponent* Mesh1P;
+	GENERATED_BODY()	
 
 	UPROPERTY(EditAnywhere)
 	class USceneComponent* HoldingComponent;		
@@ -35,9 +31,8 @@ public:
 	UFUNCTION()
 	void StopJump();
 
-	// Function that handles firing projectiles.
 	UFUNCTION()
-	void Fire();
+	void Attack();
 
 	//FPS Camera. WATCH OUT! Some code has been added to the constructor
 	UPROPERTY(VisibleAnywhere)
@@ -105,9 +100,6 @@ public:
 	FHitResult Hit;
 
 	FComponentQueryParams DefaultComponentQueryParams;
-	FCollisionResponseParams DefaultResponseParams;
-
-	/** Returns Mesh1P subobject **/
-	FORCEINLINE class USkeletalMeshComponent* GetMesh1P() const { return Mesh1P; }
+	FCollisionResponseParams DefaultResponseParams;	
 
 };

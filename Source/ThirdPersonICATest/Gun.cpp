@@ -42,6 +42,7 @@ void AGun::Tick(float DeltaTime)
 void AGun::OnFire()
 {
 	//try and fire a projectile
+
 	if (ProjectileClass != NULL)
 	{
 		const FRotator SpawnRotation = FP_MuzzleLocation->GetComponentRotation();;

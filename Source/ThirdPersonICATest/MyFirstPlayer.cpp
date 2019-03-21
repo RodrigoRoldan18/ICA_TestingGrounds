@@ -28,19 +28,11 @@ AMyFirstPlayer::AMyFirstPlayer()
 	FPSCameraComponent->SetupAttachment(FPSSpringArmComponent, USpringArmComponent::SocketName);
 	// Position the camera slightly above the eyes.
 	// Allow the pawn to control camera rotation.
-	FPSCameraComponent->bUsePawnControlRotation = false;
-	//FPSSpringArmComponent->bUsePawnControlRotation = true;
-
-	// Create a mesh component that will be used when being viewed from a '1st person' view (when controlling this pawn)
-	Mesh1P = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("CharacterMesh1P"));
-	Mesh1P->SetOnlyOwnerSee(true);				// Set so only owner can see mesh
-	Mesh1P->SetupAttachment(RootComponent);	// Attach mesh to FirstPersonCameraComponent
-	Mesh1P->bCastDynamicShadow = false;			// Disallow mesh to cast dynamic shadows
-	Mesh1P->CastShadow = false;				// Disallow mesh to cast other shadows
+	FPSCameraComponent->bUsePawnControlRotation = false;	
 
 	HoldingComponent = CreateDefaultSubobject<USceneComponent>(TEXT("HoldingComponent"));
 	HoldingComponent->RelativeLocation.X = 50.0f;
-	HoldingComponent->SetupAttachment(FPSCameraComponent);
+	HoldingComponent->SetupAttachment(GetMesh());
 
 	CurrentItem = NULL;
 	bCanMove = true;
@@ -63,13 +55,15 @@ void AMyFirstPlayer::BeginPlay()
 
 	if (GunBlueprint == NULL)
 	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("The gun has no mesh"));
 		return;
 	}
-	//This didn't really work so the gun was added like with the NPCs through BP
+	//The GunBlueprint is NULL so it's not working
 	Gun = GetWorld()->SpawnActor<AGun>(GunBlueprint);
 	Gun->AttachToComponent(GetMesh(), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint")); //Attach gun mesh
 	Gun->AnimInstance = GetMesh()->GetAnimInstance();
-	InputComponent->BindAction("Fire", IE_Pressed, Gun, &AGun::OnFire);	
+	
+	//InputComponent->BindAction("Fire", IE_Pressed, Gun, &AGun::OnFire);	
 }
 
 // Called every frame
@@ -106,7 +100,7 @@ void AMyFirstPlayer::Tick(float DeltaTime)
 		{
 			FPSCameraComponent->SetFieldOfView(FMath::Lerp(FPSCameraComponent->FieldOfView,
 				90.0f, 0.1f));			 
-			HoldingComponent->SetRelativeLocation(FVector(200.0f, 0.0f, 0.0f));
+			HoldingComponent->SetRelativeLocation(FVector(0.0f, -200.0f, 500.0f));
 			GetWorld()->GetFirstPlayerController()->PlayerCameraManager->ViewPitchMax = 179.9000002f;
 			GetWorld()->GetFirstPlayerController()->PlayerCameraManager->ViewPitchMin = -179.9000002f;
 			CurrentItem->RotateActor();
@@ -124,7 +118,7 @@ void AMyFirstPlayer::Tick(float DeltaTime)
 
 		if (bHoldingItem)
 		{			
-			HoldingComponent->SetRelativeLocation(FVector(400.0f, 0.0f, 0.0f));
+			HoldingComponent->SetRelativeLocation(FVector(0.0f, 100.0f, 0.0f));
 		}
 	}
 
@@ -143,7 +137,7 @@ void AMyFirstPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAxis("LookUp", this, &AMyFirstPlayer::AddControllerPitchInput);
 	// Set up "action" bindings.
 
-	//PlayerInputComponent->BindAction("Fire", IE_Pressed, Gun, &AGun::OnFire);
+	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &AMyFirstPlayer::Attack);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &AMyFirstPlayer::StartJump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &AMyFirstPlayer::StopJump);	
 
@@ -185,39 +179,15 @@ void AMyFirstPlayer::StopJump()
 	bPressedJump = false;
 }
 
-void AMyFirstPlayer::Fire()
+void AMyFirstPlayer::Attack()
 {
-	// Attempt to fire a projectile.	
-	//if (ProjectileClass)
-	//{
-	//	//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Shooting"));
-	//	// Get the camera transform.
-	//	FVector CameraLocation;
-	//	FRotator CameraRotation;
-	//	GetActorEyesViewPoint(CameraLocation, CameraRotation);
-
-	//	// Transform MuzzleOffset from camera space to world space.
-	//	FVector MuzzleLocation = CameraLocation + FTransform(CameraRotation).TransformVector(MuzzleOffset);
-	//	FRotator MuzzleRotation = CameraRotation;
-	//	// Skew the aim to be slightly upwards.
-	//	MuzzleRotation.Pitch += 10.0f;
-	//	UWorld* World = GetWorld();
-	//	if (World)
-	//	{
-	//		FActorSpawnParameters SpawnParams;
-	//		SpawnParams.Owner = this;
-	//		SpawnParams.Instigator = Instigator;
-	//		// Spawn the projectile at the muzzle.
-	//		AProjectile* Projectile = World->SpawnActor<AProjectile>(ProjectileClass, MuzzleLocation, MuzzleRotation, SpawnParams);
-	//		if (Projectile)
-	//		{
-	//			// Set the projectile's initial trajectory.
-	//			FVector LaunchDirection = MuzzleRotation.Vector();
-	//			Projectile->FireInDirection(LaunchDirection);
-	//		}
-	//	}
-	//}
+	//check for weapon and do different type of attack	
+	if(!bHoldingItem)
+		{
+			Gun->OnFire();
+		}	
 }
+
 
 void AMyFirstPlayer::OnAction()
 {
@@ -261,7 +231,7 @@ void AMyFirstPlayer::ToggleMovement()
 {
 	bCanMove = !bCanMove;
 	bInspecting = !bInspecting;
-	//FPSCameraComponent->bUsePawnControlRotation = !FPSCameraComponent->bUsePawnControlRotation;
+	FPSCameraComponent->bUsePawnControlRotation = !FPSCameraComponent->bUsePawnControlRotation;
 	FPSSpringArmComponent->bUsePawnControlRotation = !FPSSpringArmComponent->bUsePawnControlRotation;
 	bUseControllerRotationYaw = !bUseControllerRotationYaw;
 }

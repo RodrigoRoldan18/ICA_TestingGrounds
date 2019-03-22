@@ -53,7 +53,13 @@ void AGun::OnFire()
 		if (World != NULL)
 		{
 			//spawn the projectile at the muzzle
-			World->SpawnActor<AProjectile>(ProjectileClass, SpawnLocation, SpawnRotation);
+			AProjectile* Projectile = World->SpawnActor<AProjectile>(ProjectileClass, SpawnLocation, SpawnRotation);
+			if (Projectile)
+			{
+				//Set up the projectile's initial trajectory
+				FVector LaunchDirection = FP_MuzzleLocation->GetComponentRotation().Vector();
+				Projectile->FireInDirection(LaunchDirection);
+			}
 		}
 	}
 

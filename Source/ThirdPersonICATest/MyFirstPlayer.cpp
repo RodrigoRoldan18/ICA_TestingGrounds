@@ -122,6 +122,7 @@ void AMyFirstPlayer::Tick(float DeltaTime)
 		}
 	}
 
+	//Check if the player has been hit	
 }
 
 // Called to bind functionality to input

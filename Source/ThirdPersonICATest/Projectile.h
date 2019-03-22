@@ -30,6 +30,10 @@ public:
 	UFUNCTION()
 	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
 	
+	// Function that initializes the projectile's velocity in the shoot direction.
+	UFUNCTION()
+	void FireInDirection(const FVector& ShootDirection);
+
 	// Sets default values for this actor's properties
 	AProjectile();
 };

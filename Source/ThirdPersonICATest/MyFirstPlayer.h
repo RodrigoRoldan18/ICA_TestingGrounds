@@ -13,7 +13,10 @@ class THIRDPERSONICATEST_API AMyFirstPlayer : public ACharacter
 	GENERATED_BODY()	
 
 	UPROPERTY(EditAnywhere)
-	class USceneComponent* HoldingComponent;		
+	class USceneComponent* HoldingComponent;	
+
+	/*UPROPERTY(VisibleAnywhere, Category = "Health")
+	float Health = 100.0f;*/
 
 public:
 

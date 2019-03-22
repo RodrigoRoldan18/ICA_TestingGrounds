@@ -47,3 +47,9 @@ void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, U
 		Destroy();
 	}
 }
+
+// Function that initializes the projectile's velocity in the shoot direction.
+void AProjectile::FireInDirection(const FVector& ShootDirection)
+{
+	ProjectileMovement->Velocity = ShootDirection * ProjectileMovement->MaxSpeed;
+}

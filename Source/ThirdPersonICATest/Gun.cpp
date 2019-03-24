@@ -59,6 +59,7 @@ void AGun::OnFire()
 				//Set up the projectile's initial trajectory
 				FVector LaunchDirection = FP_MuzzleLocation->GetComponentRotation().Vector();
 				Projectile->FireInDirection(LaunchDirection);
+				//needs to report noise -> AI/Perception/ReportNoiseEvent
 			}
 		}
 	}

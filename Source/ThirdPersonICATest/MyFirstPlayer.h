@@ -32,10 +32,7 @@ public:
 	void StartJump();
 
 	UFUNCTION()
-	void StopJump();
-
-	UFUNCTION()
-	void Attack();
+	void StopJump();	
 
 	//FPS Camera. WATCH OUT! Some code has been added to the constructor
 	UPROPERTY(VisibleAnywhere)
@@ -56,7 +53,8 @@ public:
 	AMyFirstPlayer();
 
 private:
-		
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	AGun* Gun;
 
 protected:
@@ -79,6 +77,9 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
+	void Attack();
 
 	UPROPERTY(EditAnywhere)
 	class APickup* CurrentItem;

@@ -58,12 +58,10 @@ void AMyFirstPlayer::BeginPlay()
 		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("The gun has no mesh"));
 		return;
 	}
-	//The GunBlueprint is NULL so it's not working
+	
 	Gun = GetWorld()->SpawnActor<AGun>(GunBlueprint);
 	Gun->AttachToComponent(GetMesh(), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint")); //Attach gun mesh
-	Gun->AnimInstance = GetMesh()->GetAnimInstance();
-	
-	//InputComponent->BindAction("Fire", IE_Pressed, Gun, &AGun::OnFire);	
+	Gun->AnimInstance = GetMesh()->GetAnimInstance();		
 }
 
 // Called every frame

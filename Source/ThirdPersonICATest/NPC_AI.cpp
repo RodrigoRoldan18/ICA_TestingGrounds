@@ -34,8 +34,7 @@ void ANPC_AI::SenseSomething(AActor* UpdatedActor, FAIStimulus Stimulus)
 		// We set Focalpoint if the sense was successfull
 		if (Stimulus.WasSuccessfullySensed())
 		{
-			BB->SetValueAsObject(EnemyKey, UpdatedActor);		
-
+			BB->SetValueAsObject(EnemyKey, UpdatedActor);	
 		}
 		else
 		{

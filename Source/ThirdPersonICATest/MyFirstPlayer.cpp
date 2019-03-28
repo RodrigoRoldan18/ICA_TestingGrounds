@@ -9,6 +9,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "DrawDebugHelpers.h"
 #include "Gun.h"
+#include "Sword.h"
 
 // Sets default values
 AMyFirstPlayer::AMyFirstPlayer()
@@ -61,7 +62,17 @@ void AMyFirstPlayer::BeginPlay()
 	
 	Gun = GetWorld()->SpawnActor<AGun>(GunBlueprint);
 	Gun->AttachToComponent(GetMesh(), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint")); //Attach gun mesh
-	Gun->AnimInstance = GetMesh()->GetAnimInstance();		
+	Gun->AnimInstance = GetMesh()->GetAnimInstance();
+
+	//if (SwordBlueprint == NULL)
+	//{
+	//	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("The sword has no mesh"));
+	//	return;
+	//}
+
+	//Sword = GetWorld()->SpawnActor<ASword>(SwordBlueprint);
+	//Sword->AttachToComponent(GetMesh(), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));	//Attach sword mesh
+
 }
 
 // Called every frame
@@ -183,6 +194,7 @@ void AMyFirstPlayer::Attack()
 	//check for weapon and do different type of attack	
 	if(!bHoldingItem)
 		{
+			//if(Gun is visible)
 			Gun->OnFire();
 		}	
 }

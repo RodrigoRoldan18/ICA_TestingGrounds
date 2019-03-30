@@ -75,4 +75,11 @@ void AGun::OnFire()
 			AnimInstance->Montage_Play(FireAnimation, 1.f);
 		}
 	}
+	if (FireAnimationAI != NULL)
+	{
+		if (AnimInstance != NULL)
+		{
+			AnimInstance->Montage_Play(FireAnimationAI, 1.f);
+		}
+	}
 }

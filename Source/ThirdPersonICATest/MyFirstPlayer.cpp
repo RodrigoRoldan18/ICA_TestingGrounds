@@ -60,9 +60,14 @@ void AMyFirstPlayer::BeginPlay()
 		return;
 	}
 	
-	Gun = GetWorld()->SpawnActor<AGun>(GunBlueprint);
+	Gun = GetWorld()->SpawnActor<AGun>(GunBlueprint);	
 	Gun->AttachToComponent(GetMesh(), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint")); //Attach gun mesh
 	Gun->AnimInstance = GetMesh()->GetAnimInstance();
+
+	if (InputComponent != NULL)
+	{
+		InputComponent->BindAction("Fire", IE_Pressed, this, &AMyFirstPlayer::Attack);
+	}
 
 	//if (SwordBlueprint == NULL)
 	//{
@@ -146,8 +151,7 @@ void AMyFirstPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAxis("Turn", this, &AMyFirstPlayer::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("LookUp", this, &AMyFirstPlayer::AddControllerPitchInput);
 	// Set up "action" bindings.
-
-	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &AMyFirstPlayer::Attack);
+	
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &AMyFirstPlayer::StartJump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &AMyFirstPlayer::StopJump);	
 

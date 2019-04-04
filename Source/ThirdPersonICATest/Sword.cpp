@@ -36,5 +36,20 @@ void ASword::Tick(float DeltaTime)
 void ASword::OnAttack()
 {
 	//Make it attack
+	// Play a sound if there is one
+	if (AttackSound != NULL)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, AttackSound, GetActorLocation());
+	}
+
+	// Try and play a firing animation if specified
+	if (AttackAnimation != NULL)
+	{
+		// Get the animation object for the arms mesh		
+		/*if (AnimInstance != NULL)
+		{
+			AnimInstance->Montage_Play(FireAnimation, 1.f);
+		}*/
+	}
 }
 

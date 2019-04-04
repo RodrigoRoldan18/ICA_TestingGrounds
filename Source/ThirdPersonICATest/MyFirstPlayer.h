@@ -49,8 +49,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Setup")
 	TSubclassOf<class AGun> GunBlueprint;
 
-	//UPROPERTY(EditDefaultsOnly, Category = "Setup")
-	//TSubclassOf<class ASword> SwordBlueprint;
+	UPROPERTY(EditDefaultsOnly, Category = "Setup")
+	TSubclassOf<class ASword> SwordBlueprint;
 
 	// Sets default values for this character's properties
 	AMyFirstPlayer();
@@ -60,8 +60,8 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	AGun* Gun;
 
-	/*UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	ASword* Sword;*/
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	ASword* Sword;
 
 protected:
 	// Called when the game starts or when spawned
@@ -86,6 +86,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
 	void Attack();
+
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
+	void SwapWeapon();
 
 	UPROPERTY(EditAnywhere)
 	class APickup* CurrentItem;

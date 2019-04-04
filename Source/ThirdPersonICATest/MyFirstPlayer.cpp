@@ -62,22 +62,24 @@ void AMyFirstPlayer::BeginPlay()
 	
 	Gun = GetWorld()->SpawnActor<AGun>(GunBlueprint);	
 	Gun->AttachToComponent(GetMesh(), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint")); //Attach gun mesh
-	Gun->AnimInstance = GetMesh()->GetAnimInstance();
+	Gun->AnimInstance = GetMesh()->GetAnimInstance();	
+	Gun->bHidden = false;
 
 	if (InputComponent != NULL)
 	{
 		InputComponent->BindAction("Fire", IE_Pressed, this, &AMyFirstPlayer::Attack);
 	}
 
-	//if (SwordBlueprint == NULL)
-	//{
-	//	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("The sword has no mesh"));
-	//	return;
-	//}
+	if (SwordBlueprint == NULL)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("The sword has no mesh"));
+		return;
+	}
 
-	//Sword = GetWorld()->SpawnActor<ASword>(SwordBlueprint);
-	//Sword->AttachToComponent(GetMesh(), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));	//Attach sword mesh
-
+	Sword = GetWorld()->SpawnActor<ASword>(SwordBlueprint);
+	Sword->AttachToComponent(GetMesh(), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));	//Attach sword mesh
+	Sword->bHidden = true;
+	Sword->SetActorRotation(FRotator(90.0f, 0.0f, 0.0f));
 }
 
 // Called every frame
@@ -156,6 +158,7 @@ void AMyFirstPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &AMyFirstPlayer::StopJump);	
 
 	PlayerInputComponent->BindAction("Action", IE_Pressed, this, &AMyFirstPlayer::OnAction);
+	PlayerInputComponent->BindAction("SwapWeapon", IE_Pressed, this, &AMyFirstPlayer::SwapWeapon);
 	
 	PlayerInputComponent->BindAction("Inspect", IE_Pressed, this, &AMyFirstPlayer::OnInspect);
 	PlayerInputComponent->BindAction("Inspect", IE_Released, this, &AMyFirstPlayer::OnInspectReleased);
@@ -197,10 +200,33 @@ void AMyFirstPlayer::Attack()
 {
 	//check for weapon and do different type of attack	
 	if(!bHoldingItem)
+	{
+		if(!Gun->bHidden)
 		{
-			//if(Gun is visible)
 			Gun->OnFire();
 		}	
+		else if (Gun->bHidden)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Purple, TEXT("Sword Attack"));
+			Sword->OnAttack();
+		}
+	}	
+}
+
+void AMyFirstPlayer::SwapWeapon()
+{
+	//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("You are pressing Q"));
+	//check for weapon and set the one that is hidden to not hidden and viceversa	
+	if (Gun->bHidden)
+	{
+		Sword->bHidden = true;
+		Gun->bHidden = false;
+	}
+	else if (!Gun->bHidden)
+	{
+		Sword->bHidden = false;
+		Gun->bHidden = true;
+	}
 }
 
 

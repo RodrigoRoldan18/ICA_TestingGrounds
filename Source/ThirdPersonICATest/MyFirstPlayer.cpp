@@ -43,13 +43,7 @@ AMyFirstPlayer::AMyFirstPlayer()
 // Called when the game starts or when spawned
 void AMyFirstPlayer::BeginPlay()
 {
-	Super::BeginPlay();
-	if (GEngine)
-	{
-		// Put up a debug message for five seconds. The -1 "Key" value (first argument)
-		//indicates that we will never need to update or refresh this message.
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("We are using MyFirstCharacter."));
-	}
+	Super::BeginPlay();	
 
 	PitchMax = GetWorld()->GetFirstPlayerController()->PlayerCameraManager->ViewPitchMax;
 	PitchMin = GetWorld()->GetFirstPlayerController()->PlayerCameraManager->ViewPitchMin;

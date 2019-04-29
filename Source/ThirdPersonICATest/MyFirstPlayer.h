@@ -94,7 +94,10 @@ public:
 	class APickup* CurrentItem;
 
 	bool bCanMove;
+
+	UPROPERTY(BlueprintReadOnly)
 	bool bHoldingItem;
+
 	bool bInspecting;
 
 	float PitchMax;

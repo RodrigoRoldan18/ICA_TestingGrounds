@@ -21,13 +21,16 @@ class THIRDPERSONICATEST_API ANPC_AI : public AAIController
 public:
 	ANPC_AI();
 
+	UPROPERTY(BlueprintReadOnly)
+
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	
 private:
 	//this will be set up in the BP
-	UPROPERTY(EditDefaultsOnly, Category = "Blackboard")
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category = "Blackboard")
 	UBlackboardData* BlackboardToUse;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Blackboard")

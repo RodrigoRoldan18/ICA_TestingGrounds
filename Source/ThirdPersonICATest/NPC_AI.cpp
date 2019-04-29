@@ -35,6 +35,8 @@ void ANPC_AI::SenseSomething(AActor* UpdatedActor, FAIStimulus Stimulus)
 		if (Stimulus.WasSuccessfullySensed())
 		{
 			BB->SetValueAsObject(EnemyKey, UpdatedActor);	
+			//override for the door :D
+			//door->Lock
 		}
 		else
 		{

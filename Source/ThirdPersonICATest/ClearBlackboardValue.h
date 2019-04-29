@@ -18,5 +18,5 @@ class THIRDPERSONICATEST_API UClearBlackboardValue : public UBTTaskNode
 	
 protected:
 	UPROPERTY(EditAnywhere, Category = "Blackboard")
-	struct FBlackboardKeySelector KeyToClear;
+	struct FBlackboardKeySelector KeyToClear;	
 };

@@ -6,7 +6,7 @@
 EBTNodeResult::Type UClearBlackboardValue::ExecuteTask(UBehaviorTreeComponent & OwnerComp, uint8 * NodeMemory)
 {
 	auto BlackboardComp = OwnerComp.GetBlackboardComponent();
-	BlackboardComp->ClearValue(KeyToClear.SelectedKeyName);
+	BlackboardComp->ClearValue(KeyToClear.SelectedKeyName);	
 
 	return EBTNodeResult::Succeeded;
 }

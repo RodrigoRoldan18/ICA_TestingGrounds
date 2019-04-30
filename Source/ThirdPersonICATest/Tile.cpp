@@ -4,6 +4,9 @@
 #include "DrawDebugHelpers.h"
 #include "EngineUtils.h"
 #include "ActorPool.h"
+#include "MyFirstPlayer.h"
+#include "Kismet/GameplayStatics.h"
+#include "Components/HierarchicalInstancedStaticMeshComponent.h"
 #include "AI/Navigation/NavigationSystem.h"
 
 // Sets default values
@@ -14,7 +17,12 @@ ATile::ATile()
 	NavigationBoundsOffset = FVector(2000, 0, 0);
 	MinExtent = FVector(0, -2000, 0);
 	MaxExtent = FVector(4000, 2000, 0);
+	MinEnemies = 1;
+	MaxEnemies = 10;
 
+	BarrierMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BarrierCode"));
+	BarrierMesh->SetupAttachment(RootComponent);
+	
 }
 
 void ATile::SetPool(UActorPool * InPool)
@@ -108,6 +116,17 @@ void ATile::PlaceActor(TSubclassOf<AActor> ToSpawn, const FSpawnPosition& SpawnP
 void ATile::BeginPlay()
 {
 	Super::BeginPlay();	
+
+	LockGate();
+	if (Rock1BP == NULL) { return; }
+	PlaceActors(Rock1BP, 1, 4, 150.0f, 1.0f, 5.0f);
+	if (Rock5BP == NULL) { return; }	
+	PlaceActors(Rock5BP, 1, 4, 250.0f, 1.0f, 5.0f);
+	if (Rock17BP == NULL) { return; }
+	PlaceActors(Rock17BP, 1, 4, 250.0f, 1.0f, 5.0f);
+	if (AIBP == NULL) { return; }
+	PlaceAIPawns(AIBP, MinEnemies, MaxEnemies, 100.0f);
+
 }
 
 void ATile::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -125,6 +144,17 @@ void ATile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	APawn* HumanPlayer = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+	AMyFirstPlayer* ConfirmedPlayer = Cast<AMyFirstPlayer>(HumanPlayer);
+	if (!ensure(ConfirmedPlayer)) { return; }
+	if (ConfirmedPlayer->bHoldingItem && BarrierMesh->GetComponentLocation().X > ConfirmedPlayer->K2_GetActorLocation().X)
+	{
+		UnlockGate();
+	}
+	else
+	{
+		LockGate();
+	}	
 }
 
 bool ATile::CanSpawnAtLocation(FVector Location, float Radius)
@@ -133,4 +163,23 @@ bool ATile::CanSpawnAtLocation(FVector Location, float Radius)
 	FVector GlobalLocation = ActorToWorld().TransformPosition(Location);
 	bool HasHit = GetWorld()->SweepSingleByChannel(HitResult, GlobalLocation, GlobalLocation, FQuat::Identity, ECollisionChannel::ECC_GameTraceChannel2, FCollisionShape::MakeSphere(Radius));
 	return !HasHit;
+}
+
+void ATile::UnlockGate()
+{	
+	if (BarrierMesh == nullptr || BarrierGreen == nullptr) { return; }
+	BarrierMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	BarrierMesh->SetMaterial(0, BarrierGreen);
+}
+
+void ATile::LockGate()
+{	
+	if (BarrierMesh == nullptr || BarrierRed == nullptr) { return; }
+	BarrierMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	BarrierMesh->SetMaterial(0, BarrierRed);
+}
+
+FTransform ATile::GetGateLocation()
+{
+	return BarrierMesh->GetComponentTransform();
 }

@@ -22,7 +22,7 @@ class UActorPool;
 UCLASS()
 class THIRDPERSONICATEST_API ATile : public AActor
 {
-	GENERATED_BODY()		
+	GENERATED_BODY()	
 	
 public:	
 	// Sets default values for this actor's properties
@@ -47,12 +47,41 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Spawning")
 	FVector MaxExtent;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Setup")
+	int MinEnemies;
+	UPROPERTY(EditDefaultsOnly, Category = "Setup")
+	int MaxEnemies;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Setup")
+	TSubclassOf<AActor> Rock1BP;
+	UPROPERTY(EditDefaultsOnly, Category = "Setup")
+	TSubclassOf<AActor> Rock5BP;
+	UPROPERTY(EditDefaultsOnly, Category = "Setup")
+	TSubclassOf<AActor> Rock17BP;
+	UPROPERTY(EditDefaultsOnly, Category = "Setup")
+	TSubclassOf<APawn> AIBP;
+	UPROPERTY(EditAnywhere)
+	UStaticMeshComponent* BarrierMesh;
+	UPROPERTY(EditDefaultsOnly, Category = "Setup")
+	UMaterialInterface* BarrierGreen;
+	UPROPERTY(EditDefaultsOnly, Category = "Setup")
+	UMaterialInterface* BarrierRed;
+
 	UFUNCTION(BlueprintCallable, Category = "Pool")
 	void SetPool(UActorPool* Pool);	
+
+	UFUNCTION(BlueprintCallable, Category = "Gate")
+	void UnlockGate();
+
+	UFUNCTION(BlueprintCallable, Category = "Gate")
+	void LockGate();
+
+	UFUNCTION(BlueprintCallable, Category = "Gate")
+	FTransform GetGateLocation();
 
 private:
 	void PositionNavMeshBoundsVolume();

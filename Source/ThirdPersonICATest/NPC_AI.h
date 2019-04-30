@@ -21,8 +21,6 @@ class THIRDPERSONICATEST_API ANPC_AI : public AAIController
 public:
 	ANPC_AI();
 
-	UPROPERTY(BlueprintReadOnly)
-
 
 protected:
 	// Called when the game starts or when spawned
@@ -30,7 +28,7 @@ protected:
 	
 private:
 	//this will be set up in the BP
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category = "Blackboard")
+	UPROPERTY(EditDefaultsOnly, Category = "Blackboard")
 	UBlackboardData* BlackboardToUse;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Blackboard")

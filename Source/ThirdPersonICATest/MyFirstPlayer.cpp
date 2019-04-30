@@ -86,7 +86,7 @@ void AMyFirstPlayer::Tick(float DeltaTime)
 	ForwardVector = FPSCameraComponent->GetForwardVector();
 	End = ((ForwardVector * 200.0f) + Start);
 
-	DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, 1, 0, 1);
+	//DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, 1, 0, 1);
 
 	if (!bHoldingItem)
 	{
@@ -129,6 +129,8 @@ void AMyFirstPlayer::Tick(float DeltaTime)
 		if (bHoldingItem)
 		{			
 			HoldingComponent->SetRelativeLocation(FVector(0.0f, 100.0f, 0.0f));
+			//this is when the player is holding the chest
+			//check for enemies that can see the player.
 		}
 	}
 

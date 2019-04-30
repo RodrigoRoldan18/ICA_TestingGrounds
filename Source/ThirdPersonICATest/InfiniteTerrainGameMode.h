@@ -21,6 +21,7 @@ public:
 	void PopulateBoundsVolumePool();
 
 protected:
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pool")
 	class UActorPool* NavMeshBoundsVolumePool;
 

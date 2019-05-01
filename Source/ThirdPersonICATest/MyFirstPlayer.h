@@ -63,6 +63,8 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	ASword* Sword;
 
+	bool isPaused;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;	
@@ -89,6 +91,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
 	void SwapWeapon();
+
+	void PauseMenu();
 
 	UPROPERTY(EditAnywhere)
 	class APickup* CurrentItem;

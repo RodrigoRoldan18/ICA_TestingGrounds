@@ -8,6 +8,7 @@
 #include "GameFramework/Controller.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "DrawDebugHelpers.h"
+#include "WidgetBlueprintGeneratedClass.h"
 #include "Gun.h"
 #include "Sword.h"
 
@@ -155,7 +156,8 @@ void AMyFirstPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 	PlayerInputComponent->BindAction("Action", IE_Pressed, this, &AMyFirstPlayer::OnAction);
 	PlayerInputComponent->BindAction("SwapWeapon", IE_Pressed, this, &AMyFirstPlayer::SwapWeapon);
-	
+	PlayerInputComponent->BindAction("Pause", IE_Pressed, this, &AMyFirstPlayer::PauseMenu);
+
 	PlayerInputComponent->BindAction("Inspect", IE_Pressed, this, &AMyFirstPlayer::OnInspect);
 	PlayerInputComponent->BindAction("Inspect", IE_Released, this, &AMyFirstPlayer::OnInspectReleased);
 }
@@ -233,6 +235,11 @@ void AMyFirstPlayer::OnAction()
 	{
 		ToggleItemPickup();
 	}
+}
+
+void AMyFirstPlayer::PauseMenu()
+{
+	
 }
 
 void AMyFirstPlayer::OnInspect()

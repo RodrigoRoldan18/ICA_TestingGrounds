@@ -6,7 +6,6 @@
 #include "ActorPool.h"
 #include "MyFirstPlayer.h"
 #include "Kismet/GameplayStatics.h"
-#include "Components/HierarchicalInstancedStaticMeshComponent.h"
 #include "AI/Navigation/NavigationSystem.h"
 
 // Sets default values

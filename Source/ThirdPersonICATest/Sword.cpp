@@ -14,23 +14,6 @@ ASword::ASword()
 	FP_Sword = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("FP_Sword"));
 	FP_Sword->bCastDynamicShadow = false;		// Disallow mesh to cast dynamic shadows
 	FP_Sword->CastShadow = false;			// Disallow mesh to cast other shadows
-
-	//TODO:
-	//set invisible until player presses the key to change weapon
-}
-
-// Called when the game starts or when spawned
-void ASword::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
-
-// Called every frame
-void ASword::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
 }
 
 void ASword::OnAttack()
@@ -41,7 +24,6 @@ void ASword::OnAttack()
 	{
 		UGameplayStatics::PlaySoundAtLocation(this, AttackSound, GetActorLocation());
 	}
-
 	// Try and play a firing animation if specified
 	if (AttackAnimation != NULL)
 	{

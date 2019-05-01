@@ -13,10 +13,7 @@ class THIRDPERSONICATEST_API AMyFirstPlayer : public ACharacter
 	GENERATED_BODY()	
 
 	UPROPERTY(EditAnywhere)
-	class USceneComponent* HoldingComponent;	
-
-	/*UPROPERTY(VisibleAnywhere, Category = "Health")
-	float Health = 100.0f;*/
+	class USceneComponent* HoldingComponent;		
 
 public:
 
@@ -51,6 +48,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Setup")
 	TSubclassOf<class ASword> SwordBlueprint;
+
+	UPROPERTY(EditAnywhere, Category = "Health")
+	float MainHealth = 100.0f;
 
 	// Sets default values for this character's properties
 	AMyFirstPlayer();
@@ -94,6 +94,10 @@ public:
 
 	void PauseMenu();
 
+	virtual void NotifyActorBeginOverlap(AActor * OtherActor) override;
+	virtual void NotifyActorEndOverlap(AActor* OtherActor) override;
+	void CauseDamage();
+
 	UPROPERTY(EditAnywhere)
 	class APickup* CurrentItem;
 
@@ -101,7 +105,10 @@ public:
 
 	UPROPERTY(BlueprintReadOnly)
 	bool bHoldingItem;
+	UPROPERTY(BlueprintReadOnly)
+	bool isActorTheSameType;
 
+	AMyFirstPlayer* PlayerCollided;
 	bool bInspecting;
 
 	float PitchMax;

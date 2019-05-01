@@ -8,7 +8,7 @@
 #include "GameFramework/Controller.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "DrawDebugHelpers.h"
-#include "WidgetBlueprintGeneratedClass.h"
+#include "Kismet/GameplayStatics.h"
 #include "Gun.h"
 #include "Sword.h"
 
@@ -129,9 +129,7 @@ void AMyFirstPlayer::Tick(float DeltaTime)
 
 		if (bHoldingItem)
 		{			
-			HoldingComponent->SetRelativeLocation(FVector(0.0f, 100.0f, 0.0f));
-			//this is when the player is holding the chest
-			//check for enemies that can see the player.
+			HoldingComponent->SetRelativeLocation(FVector(0.0f, 100.0f, 0.0f));			
 		}
 	}
 
@@ -205,10 +203,24 @@ void AMyFirstPlayer::Attack()
 		}	
 		else if (Gun->bHidden)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Purple, TEXT("Sword Attack"));
 			Sword->OnAttack();
+			if (isActorTheSameType)
+			{
+				//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Orange, TEXT("OMG OMG"));
+				if (PlayerCollided != nullptr)
+				{
+					if (!ensure(PlayerCollided)) { return; }
+					PlayerCollided->CauseDamage();
+				}
+			}
+			
 		}
 	}	
+}
+
+void AMyFirstPlayer::CauseDamage()
+{
+	MainHealth -= 10.0f;
 }
 
 void AMyFirstPlayer::SwapWeapon()
@@ -240,6 +252,33 @@ void AMyFirstPlayer::OnAction()
 void AMyFirstPlayer::PauseMenu()
 {
 	
+}
+
+void AMyFirstPlayer::NotifyActorBeginOverlap(AActor* OtherActor)
+{
+	Super::NotifyActorBeginOverlap(OtherActor);
+
+	// Other Actor is the actor that triggered the event. Check that is not ourself.  
+	if (OtherActor && (OtherActor != this) && OtherActor->GetClass()->IsChildOf(AMyFirstPlayer::StaticClass()))
+	{
+		isActorTheSameType = true;
+		PlayerCollided = Cast<AMyFirstPlayer>(OtherActor);
+	}
+	else
+	{
+		isActorTheSameType = false;
+		PlayerCollided = nullptr;
+	}
+}
+
+void AMyFirstPlayer::NotifyActorEndOverlap(AActor* OtherActor)
+{
+	Super::NotifyActorEndOverlap(OtherActor);
+
+	if (OtherActor && (OtherActor != this) && OtherActor->GetClass()->IsChildOf(AMyFirstPlayer::StaticClass()))
+	{
+		isActorTheSameType = false;
+	}	
 }
 
 void AMyFirstPlayer::OnInspect()
@@ -286,7 +325,14 @@ void AMyFirstPlayer::ToggleItemPickup()
 	{
 		bHoldingItem = !bHoldingItem;
 		CurrentItem->Pickup();
-
+		//executed when the player is picking up something
+		//TArray<AActor*> EnemiesInLevel;
+		//UGameplayStatics::GetAllActorsWithTag(GetWorld(), "Enemy", EnemiesInLevel);
+		//for(auto Enemy : EnemiesInLevel)
+		//{
+		//	AMyFirstPlayer* ConfirmedEnemy = Cast<
+		//	//ConfirmedEnemy->getblack
+		//}
 		if (!bHoldingItem)
 		{
 			CurrentItem = NULL;

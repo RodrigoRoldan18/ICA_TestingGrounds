@@ -24,3 +24,6 @@ protected:
 	float Range;
 	
 };
+
+//Same problem as FocusAtActor. UE4 does not let me select it because it probably has
+//to be promoted to a BP

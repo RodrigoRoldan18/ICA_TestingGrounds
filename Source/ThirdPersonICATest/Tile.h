@@ -47,14 +47,14 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Spawning")
 	FVector MaxExtent;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Setup")
-	int MinEnemies;
-	UPROPERTY(EditDefaultsOnly, Category = "Setup")
-	int MaxEnemies;
-
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup")
+	int MinEnemies;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup")
+	int MaxEnemies;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Setup")
 	TSubclassOf<AActor> Rock1BP;
@@ -81,7 +81,7 @@ public:
 	void LockGate();
 
 	UFUNCTION(BlueprintCallable, Category = "Gate")
-	FTransform GetGateLocation();
+	FVector GetGateLocation();
 
 private:
 	void PositionNavMeshBoundsVolume();

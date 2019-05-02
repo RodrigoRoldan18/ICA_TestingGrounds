@@ -26,6 +26,7 @@ ATile::ATile()
 
 void ATile::SetPool(UActorPool * InPool)
 {
+	//the pool of navMeshes is obtained
 	Pool = InPool;
 
 	PositionNavMeshBoundsVolume();
@@ -33,6 +34,7 @@ void ATile::SetPool(UActorPool * InPool)
 
 void ATile::PositionNavMeshBoundsVolume()
 {
+	//if it has any navmeshes then it will get one navmesh and set it in the world
 	NavMeshBoundsVolume = Pool->Checkout();
 	if (NavMeshBoundsVolume == nullptr)
 	{
@@ -46,6 +48,7 @@ void ATile::PositionNavMeshBoundsVolume()
 template<class T>
 void ATile::RandomlyPlaceActors(TSubclassOf<T> ToSpawn, int MinSpawn, int MaxSpawn, float Radius, float MinScale, float MaxScale)
 {
+	//depending on what type, the actor will be placed with specific components.
 	int NumberToSpawn = FMath::RandRange(MinSpawn, MaxSpawn);
 	for (size_t i = 0; i < NumberToSpawn; i++)
 	{
@@ -62,17 +65,19 @@ void ATile::RandomlyPlaceActors(TSubclassOf<T> ToSpawn, int MinSpawn, int MaxSpa
 
 void ATile::PlaceActors(TSubclassOf<AActor> ToSpawn, int MinSpawn, int MaxSpawn, float Radius, float MinScale, float MaxScale)
 {		
+	//Spawns the assets into the level
 	RandomlyPlaceActors(ToSpawn, MinSpawn, MaxSpawn, Radius, MinScale, MaxScale);
 }
 
 void ATile::PlaceAIPawns(TSubclassOf<APawn> ToSpawn, int MinSpawn, int MaxSpawn, float Radius)
 {
+	//spawns the ai into the level
 	RandomlyPlaceActors(ToSpawn, MinSpawn, MaxSpawn, Radius, 1, 1);
 }
 
 bool ATile::FindEmptyLocation(FVector& OutLocation, float Radius)
 {
-
+	//it uses a trial and error method where it tries to spawn the object on the map
 	FBox Bounds(MinExtent, MaxExtent);
 	const int MAX_ATTEMPTS = 100;
 	for (size_t i = 0; i < MAX_ATTEMPTS; i++)
@@ -89,9 +94,10 @@ bool ATile::FindEmptyLocation(FVector& OutLocation, float Radius)
 
 void ATile::PlaceActor(TSubclassOf<APawn> ToSpawn, const FSpawnPosition& SpawnPosition)
 {
+	//after the location has been confirmed, it spawns the actor in the level
 	FRotator Rotation = FRotator(0, SpawnPosition.Rotation, 0);
 	APawn* Spawned = GetWorld()->SpawnActor<APawn>(ToSpawn, SpawnPosition.Location, Rotation);
-	if (Spawned)
+	if (Spawned != nullptr)
 	{		
 		Spawned->AttachToActor(this, FAttachmentTransformRules(EAttachmentRule::KeepRelative, false));		
 		Spawned->SpawnDefaultController();
@@ -101,8 +107,9 @@ void ATile::PlaceActor(TSubclassOf<APawn> ToSpawn, const FSpawnPosition& SpawnPo
 
 void ATile::PlaceActor(TSubclassOf<AActor> ToSpawn, const FSpawnPosition& SpawnPosition)
 {
+	//after the location has been confirmed, it spawns the actor in the level
 	AActor* Spawned = GetWorld()->SpawnActor<AActor>(ToSpawn);
-	if (Spawned)
+	if (Spawned != nullptr)
 	{
 		Spawned->SetActorRelativeLocation(SpawnPosition.Location);
 		Spawned->AttachToActor(this, FAttachmentTransformRules(EAttachmentRule::KeepRelative, false));
@@ -135,6 +142,7 @@ void ATile::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	if (Pool != nullptr && NavMeshBoundsVolume != nullptr)
 	{
 		Pool->Return(NavMeshBoundsVolume);
+		//remove actors here for garbage collection
 	}
 }
 
@@ -142,15 +150,11 @@ void ATile::EndPlay(const EEndPlayReason::Type EndPlayReason)
 void ATile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	//it locks the gates behind the player
 	APawn* HumanPlayer = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
 	AMyFirstPlayer* ConfirmedPlayer = Cast<AMyFirstPlayer>(HumanPlayer);
 	if (!ensure(ConfirmedPlayer)) { return; }
-	if (ConfirmedPlayer->bHoldingItem && BarrierMesh->GetComponentLocation().X > ConfirmedPlayer->K2_GetActorLocation().X)
-	{
-		UnlockGate();
-	}
-	else
+	if (BarrierMesh->GetComponentLocation().X < ConfirmedPlayer->GetActorLocation().X)
 	{
 		LockGate();
 	}	
@@ -158,6 +162,7 @@ void ATile::Tick(float DeltaTime)
 
 bool ATile::CanSpawnAtLocation(FVector Location, float Radius)
 {
+	//creates a sphere cast that will be used to determine if it is colliding with any other objects
 	FHitResult HitResult;
 	FVector GlobalLocation = ActorToWorld().TransformPosition(Location);
 	bool HasHit = GetWorld()->SweepSingleByChannel(HitResult, GlobalLocation, GlobalLocation, FQuat::Identity, ECollisionChannel::ECC_GameTraceChannel2, FCollisionShape::MakeSphere(Radius));
@@ -166,6 +171,7 @@ bool ATile::CanSpawnAtLocation(FVector Location, float Radius)
 
 void ATile::UnlockGate()
 {	
+	//mechanic to open the gate
 	if (BarrierMesh == nullptr || BarrierGreen == nullptr) { return; }
 	BarrierMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	BarrierMesh->SetMaterial(0, BarrierGreen);
@@ -173,12 +179,14 @@ void ATile::UnlockGate()
 
 void ATile::LockGate()
 {	
+	//mechanic to close the gate
 	if (BarrierMesh == nullptr || BarrierRed == nullptr) { return; }
 	BarrierMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	BarrierMesh->SetMaterial(0, BarrierRed);
 }
 
-FTransform ATile::GetGateLocation()
+FVector ATile::GetGateLocation()
 {
-	return BarrierMesh->GetComponentTransform();
+	//gives the location of the gate in the level
+	return BarrierMesh->GetComponentLocation();
 }

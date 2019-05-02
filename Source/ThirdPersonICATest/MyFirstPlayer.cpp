@@ -9,6 +9,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "DrawDebugHelpers.h"
 #include "Kismet/GameplayStatics.h"
+#include "Tile.h"
 #include "Gun.h"
 #include "Sword.h"
 
@@ -91,6 +92,7 @@ void AMyFirstPlayer::Tick(float DeltaTime)
 
 	if (!bHoldingItem)
 	{
+		//checks if the player is close enough to the chest 
 		if (GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_Visibility, DefaultComponentQueryParams,
 			DefaultResponseParams))
 		{
@@ -107,6 +109,7 @@ void AMyFirstPlayer::Tick(float DeltaTime)
 
 	if (bInspecting)
 	{
+		//this repositions the item close to the camera and allows its rotation and disables the player's
 		if (bHoldingItem)
 		{
 			FPSCameraComponent->SetFieldOfView(FMath::Lerp(FPSCameraComponent->FieldOfView,
@@ -118,17 +121,20 @@ void AMyFirstPlayer::Tick(float DeltaTime)
 		}
 		else
 		{
+			//if the player has no item, it zooms in
 			FPSCameraComponent->SetFieldOfView(FMath::Lerp(FPSCameraComponent->FieldOfView,
 				45.0f, 0.1f));
 		}
 	}
 	else
 	{
+		//if the player is not inspecting it resets the field of view of the camera
 		FPSCameraComponent->SetFieldOfView(FMath::Lerp(FPSCameraComponent->FieldOfView,
 			90.0f, 0.1f));
 
 		if (bHoldingItem)
-		{			
+		{	
+			//it always updates the position of the chest to be in front of the player
 			HoldingComponent->SetRelativeLocation(FVector(0.0f, 100.0f, 0.0f));			
 		}
 	}
@@ -206,11 +212,10 @@ void AMyFirstPlayer::Attack()
 			Sword->OnAttack();
 			if (isActorTheSameType)
 			{
-				//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Orange, TEXT("OMG OMG"));
 				if (PlayerCollided != nullptr)
 				{
 					if (!ensure(PlayerCollided)) { return; }
-					PlayerCollided->CauseDamage();
+					PlayerCollided->CauseDamage();					
 				}
 			}
 			
@@ -225,7 +230,6 @@ void AMyFirstPlayer::CauseDamage()
 
 void AMyFirstPlayer::SwapWeapon()
 {
-	//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("You are pressing Q"));
 	//check for weapon and set the one that is hidden to not hidden and viceversa	
 	if (Gun->bHidden)
 	{
@@ -251,11 +255,12 @@ void AMyFirstPlayer::OnAction()
 
 void AMyFirstPlayer::PauseMenu()
 {
-	
+	//this could not be implemented because I don't know how to use Widgets through C++
 }
 
 void AMyFirstPlayer::NotifyActorBeginOverlap(AActor* OtherActor)
 {
+	//this is used for the melee attack to determine if the player is next to an enemy
 	Super::NotifyActorBeginOverlap(OtherActor);
 
 	// Other Actor is the actor that triggered the event. Check that is not ourself.  
@@ -283,6 +288,7 @@ void AMyFirstPlayer::NotifyActorEndOverlap(AActor* OtherActor)
 
 void AMyFirstPlayer::OnInspect()
 {
+	//mechanics to allow rotation on the chest and not the player
 	if (bHoldingItem)
 	{
 		LastRotation = GetControlRotation();
@@ -296,6 +302,7 @@ void AMyFirstPlayer::OnInspect()
 
 void AMyFirstPlayer::OnInspectReleased()
 {
+	//resets the values changed in the function above to what they were
 	if (bInspecting && bHoldingItem)
 	{
 		GetController()->SetControlRotation(LastRotation);
@@ -312,6 +319,8 @@ void AMyFirstPlayer::OnInspectReleased()
 
 void AMyFirstPlayer::ToggleMovement()
 {
+	//prevents the player from moving
+	//There is a bug here because the player can still use the Yaw Rotation
 	bCanMove = !bCanMove;
 	bInspecting = !bInspecting;
 	FPSCameraComponent->bUsePawnControlRotation = !FPSCameraComponent->bUsePawnControlRotation;
@@ -323,16 +332,24 @@ void AMyFirstPlayer::ToggleItemPickup()
 {
 	if (CurrentItem)
 	{
+		//if the player is picking up an object and is next to one
 		bHoldingItem = !bHoldingItem;
 		CurrentItem->Pickup();
-		//executed when the player is picking up something
-		//TArray<AActor*> EnemiesInLevel;
-		//UGameplayStatics::GetAllActorsWithTag(GetWorld(), "Enemy", EnemiesInLevel);
-		//for(auto Enemy : EnemiesInLevel)
-		//{
-		//	AMyFirstPlayer* ConfirmedEnemy = Cast<
-		//	//ConfirmedEnemy->getblack
-		//}
+		if (bHoldingItem)
+		{
+			//this also checks for the gate to unlock it
+			TArray<AActor*> FoundTiles;
+			UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATile::StaticClass(), FoundTiles);
+			for (auto Tile : FoundTiles)
+			{				
+				auto BPTile = Cast<ATile>(Tile);
+				if (BPTile->GetGateLocation().X > GetActorLocation().X)
+				{
+					//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("excuse me?"));
+					BPTile->UnlockGate();
+				}				
+			}
+		}
 		if (!bHoldingItem)
 		{
 			CurrentItem = NULL;

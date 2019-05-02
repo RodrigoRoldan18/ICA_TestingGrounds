@@ -49,8 +49,11 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Setup")
 	TSubclassOf<class ASword> SwordBlueprint;
 
-	UPROPERTY(EditAnywhere, Category = "Health")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Health")
 	float MainHealth = 100.0f;
+
+	/*UPROPERTY(EditDefaultsOnly, Category = "Setup")
+	TSubclassOf<class ATile> TileBlueprint;*/
 
 	// Sets default values for this character's properties
 	AMyFirstPlayer();
@@ -106,7 +109,7 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	bool bHoldingItem;
 	UPROPERTY(BlueprintReadOnly)
-	bool isActorTheSameType;
+	bool isActorTheSameType;	
 
 	AMyFirstPlayer* PlayerCollided;
 	bool bInspecting;

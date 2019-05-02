@@ -23,4 +23,4 @@ protected:
 };
 
 //This is a decorator for the Patrol behaviour. However, the Blackboard doesn't let me select it
-//it probably has to be promoted into a BP 
+//it probably has to be promoted into a BP therefore it is not in use

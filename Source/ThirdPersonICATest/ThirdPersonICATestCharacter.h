@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "ThirdPersonICATestCharacter.generated.h"
 
+//NOT IN USE, I DEVELOPED MY OWN PLAYER
+
 UCLASS(config=Game)
 class AThirdPersonICATestCharacter : public ACharacter
 {

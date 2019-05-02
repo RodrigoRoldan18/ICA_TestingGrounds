@@ -35,3 +35,4 @@ EBTNodeResult::Type UChooseNextWaypoint::ExecuteTask(UBehaviorTreeComponent& Own
 }
 
 
+//THIS .cpp .h CLASS IS NOT IN USE ANYMORE. CHANGED IT FOR EQS QUERY

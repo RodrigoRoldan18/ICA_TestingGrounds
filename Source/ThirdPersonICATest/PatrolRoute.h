@@ -21,3 +21,5 @@ private:
 	TArray<AActor*> PatrolPoints;
 	
 };
+
+//This is not in use anymore because it got replaced for EQS Query

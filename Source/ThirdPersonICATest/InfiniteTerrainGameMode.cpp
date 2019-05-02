@@ -13,6 +13,7 @@ AInfiniteTerrainGameMode::AInfiniteTerrainGameMode()
 
 void AInfiniteTerrainGameMode::PopulateBoundsVolumePool()
 {
+	//checks for all navMesh in the world
 	auto VolumeIterator = TActorIterator<ANavMeshBoundsVolume>(GetWorld());
 	while (VolumeIterator)
 	{
@@ -23,5 +24,6 @@ void AInfiniteTerrainGameMode::PopulateBoundsVolumePool()
 
 void AInfiniteTerrainGameMode::AddToPool(ANavMeshBoundsVolume* VolumeToAdd)
 {
+	//the navMesh gets added to the pool of meshes
 	NavMeshBoundsVolumePool->Add(VolumeToAdd);
 }
